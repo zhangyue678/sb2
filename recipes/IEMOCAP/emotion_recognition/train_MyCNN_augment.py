@@ -20,6 +20,7 @@ from torch.utils.data import DataLoader
 from enum import Enum, auto
 from tqdm.contrib import tqdm
 from hyperpyyaml import load_hyperpyyaml
+import torch.nn.functional as F
 
 
 class EmoIdBrain(sb.Brain):
@@ -216,12 +217,14 @@ class EmoIdBrain(sb.Brain):
             save_file = os.path.join(
                 self.hparams.output_folder, "predictions.csv"
             )
+
             with open(save_file, "w", newline="") as csvfile:
                 outwriter = csv.writer(csvfile, delimiter=",")
-                outwriter.writerow(["id", "prediction", "true_value"])
+                outwriter.writerow(["id", "prediction", "true_value", "outputs0", "outputs1", "outputs2", "outputs3"])
 
         self.on_evaluate_start(max_key=max_key, min_key=min_key)  # done before
         self.modules.eval()
+
         with torch.no_grad():
             for batch in tqdm(
                 test_set, dynamic_ncols=True, disable=not progressbar
@@ -230,17 +233,20 @@ class EmoIdBrain(sb.Brain):
 
                 emo_ids = batch.id
                 true_vals = batch.emo_encoded.data.squeeze(dim=1).tolist()
-                output,_ = self.compute_forward(batch, stage=Stage.TEST)
+                output, _ = self.compute_forward(batch, stage=Stage.TEST)
                 predictions = (
                     torch.argmax(output, dim=-1).squeeze(dim=1).tolist()
                 )
 
+                output = F.softmax(output.squeeze(dim=1), dim=1)
+                output = output.tolist()
+
                 with open(save_file, "a", newline="") as csvfile:
                     outwriter = csv.writer(csvfile, delimiter=",")
-                    for emo_id, prediction, true_val in zip(
-                        emo_ids, predictions, true_vals
+                    for emo_id, prediction, true_val, out in zip(
+                        emo_ids, predictions, true_vals, output
                     ):
-                        outwriter.writerow([emo_id, prediction, true_val])
+                        outwriter.writerow([emo_id, prediction, true_val, out[0],out[1],out[2],out[3]])
 
                 # Debug mode only runs a few batches
                 if self.debug and self.step == self.debug_batches:

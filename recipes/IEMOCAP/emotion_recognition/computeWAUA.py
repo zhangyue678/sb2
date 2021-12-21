@@ -17,7 +17,7 @@ def result(save_folder, output_folder):
                 result[i] = line[:5]
     for i in range(4):
         LABELS.append(result[i])
- 
+    print(LABELS) 
    
     path = output_folder + '/predictions.csv'
     with open(path, newline="") as csvfile:

@@ -215,7 +215,3 @@ Please, cite SpeechBrain if you use it for your research or business.
   note={arXiv:2106.04624}
 }
 ```
-
-# SER
-# SER
-# SER

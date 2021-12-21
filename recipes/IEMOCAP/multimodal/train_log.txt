@@ -1,0 +1,24 @@
+------------------------------------
+0*speech + 1*nlp : WA:0.71, UA:0.68
+0.1*speech + 0.9*nlp : WA:0.71, UA:0.68
+0.2*speech + 0.8*nlp : WA:0.72, UA:0.69
+0.3*speech + 0.7*nlp : WA:0.73, UA:0.71
+0.4*speech + 0.6*nlp : WA:0.74, UA:0.71
+0.5*speech + 0.5*nlp : WA:0.76, UA:0.72
+0.6*speech + 0.4*nlp : WA:0.78, UA:0.75
+0.7*speech + 0.3*nlp : WA:0.8, UA:0.77
+0.8*speech + 0.2*nlp : WA:0.8, UA:0.78
+0.9*speech + 0.1*nlp : WA:0.75, UA:0.74
+1.0*speech + 0.0*nlp : WA:0.62, UA:0.62
+------------------------------------
+0*speech + 1*nlp : WA:0.71, UA:0.68
+0.1*speech + 0.9*nlp : WA:0.71, UA:0.68
+0.2*speech + 0.8*nlp : WA:0.72, UA:0.69
+0.3*speech + 0.7*nlp : WA:0.73, UA:0.69
+0.4*speech + 0.6*nlp : WA:0.74, UA:0.7
+0.5*speech + 0.5*nlp : WA:0.75, UA:0.72
+0.6*speech + 0.4*nlp : WA:0.76, UA:0.73
+0.7*speech + 0.3*nlp : WA:0.78, UA:0.75
+0.8*speech + 0.2*nlp : WA:0.8, UA:0.78
+0.9*speech + 0.1*nlp : WA:0.8, UA:0.78
+1.0*speech + 0.0*nlp : WA:0.66, UA:0.64
