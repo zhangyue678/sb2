@@ -370,3 +370,6 @@ if __name__ == "__main__":
         min_key="error",
         test_loader_kwargs=hparams["dataloader_options"],
     )
+
+    from computeWAUA import result
+    result(hparams["save_folder"], hparams["output_folder"])

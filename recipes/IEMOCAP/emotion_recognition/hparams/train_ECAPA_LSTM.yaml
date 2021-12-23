@@ -56,7 +56,7 @@ random_chunk: True
 drop_last: False
 
 # Feature parameters
-n_mels: 128
+n_mels: 80
 left_frames: 0
 right_frames: 0
 deltas: False
@@ -79,13 +79,13 @@ compute_features: !new:speechbrain.lobes.features.Fbank
 
 embedding_model: !new:speechbrain.lobes.models.ECAPA_TDNN_LSTM.ECAPA_TDNN
     input_size: !ref <n_mels>
-    channels: [512, 512, 512, 512, 1536]
+    channels: [512, 512, 512, 512, 1024]
     kernel_sizes: [5, 3, 3, 3, 1]
     dilations: [1, 2, 3, 4, 1]
     attention_channels: 64
     lin_neurons: 96
 
-classifier: !new:speechbrain.lobes.models.ECAPA_TDNN.Classifier
+classifier: !new:speechbrain.lobes.models.ECAPA_TDNN_LSTM.Classifier
     input_size: 96
     out_neurons: !ref <out_n_neurons>
 

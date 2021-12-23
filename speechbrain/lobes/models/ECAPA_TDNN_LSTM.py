@@ -45,11 +45,11 @@ class TDNNBlock(nn.Module):
 
     Example
     -------
-    >>> inp_tensor = torch.rand([8, 120, 64]).transpose(1, 2)
+    >>> inp_tensor = torch.rand([8, 300, 64]).transpose(1, 2)
     >>> layer = TDNNBlock(64, 64, kernel_size=3, dilation=1)
     >>> out_tensor = layer(inp_tensor).transpose(1, 2)
     >>> out_tensor.shape
-    torch.Size([8, 120, 64])
+    torch.Size([8, 300, 64])
     """
 
     def __init__(
@@ -382,7 +382,7 @@ class ECAPA_TDNN(torch.nn.Module):
 
     Example
     -------
-    >>> input_feats = torch.rand([5, 120, 80])
+    >>> input_feats = torch.rand([5, 300, 80])
     >>> compute_embedding = ECAPA_TDNN(80, lin_neurons=192)
     >>> outputs = compute_embedding(input_feats)
     >>> outputs.shape
@@ -463,8 +463,11 @@ class ECAPA_TDNN(torch.nn.Module):
             kernel_size=1,
         )
 
-        self.lstm1 = nn.LSTM(input_size=channels[1], hidden_size=128, num_layers=4, batch_first=True)
-        self.lstm2 = nn.LSTM(input_size=channels[2], hidden_size=64, num_layers=4, batch_first=True)
+        self.lstm1 = nn.LSTM(input_size=channels[1], hidden_size=128, num_layers=2, 
+                            batch_first=True, dropout=0.3, bidirectional=True)
+
+        self.lstm2 = nn.LSTM(input_size=channels[2], hidden_size=128, num_layers=2, 
+                            batch_first=True, dropout=0.3, bidirectional=True)
 
     def forward(self, x, lengths=None):
         """Returns the embedding vector.
@@ -472,10 +475,10 @@ class ECAPA_TDNN(torch.nn.Module):
         Arguments
         ---------
         x : torch.Tensor
-            Tensor of shape (batch, time, channel).
+            Tensor of shape (batch, time_steps, channel).
         """
         # Minimize transpose for efficiency
-        x = x.transpose(1, 2)
+        x = x.transpose(1, 2) 
 
         xl = []
         for i,layer in enumerate(self.blocks):
@@ -483,16 +486,20 @@ class ECAPA_TDNN(torch.nn.Module):
                 x = layer(x, lengths=lengths)
                 
                 if i==1:
-                    x, (h, c) = self.lstm1(x, lengths=lengths)
+                    x_in0 = x.transpose(1, 2)
+                    x_lstm0, (h, c) = self.lstm1(x_in0)
+                    x_lstm0 = x_lstm0.transpose(1, 2)
                 elif i==2:
-                    x, (h, c) = self.lstm2(x, lengths=lengths)
+                    x_in1 = x.transpose(1, 2)
+                    x_lstm1, (h, c) = self.lstm2(x_in1)
+                    x_lstm1 = x_lstm1.transpose(1, 2)
                 
             except TypeError:
                 x = layer(x)
             xl.append(x)
 
         # Multi-layer feature aggregation
-        x = torch.cat(xl[1:], dim=1)
+        x = torch.cat((x_lstm0,xl[-1],x_lstm1), dim=1)
         x = self.mfa(x)
 
         # Attentive Statistical Pooling
@@ -501,7 +508,7 @@ class ECAPA_TDNN(torch.nn.Module):
 
         # Final linear transformation
         x = self.fc(x)
-
+        
         x = x.transpose(1, 2)
         return x
 
