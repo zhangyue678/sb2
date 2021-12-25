@@ -99,7 +99,9 @@ def precision_recall(cm):
 
     recall = TP / (TP+FN)  # 查全率
 
-    WA = precision.sum()/4
+    cm1 = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+    WA = (np.diag(cm1)).sum()/4
+    #WA = precision.sum()/4
 
     UA = TP.sum()/(cm.sum(axis=0)).sum()
 

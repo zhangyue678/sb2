@@ -3,7 +3,7 @@ import csv
 
 
 NLP_Path = '/data2/home/zhangyue/nlp/result/Bert/1969/nlp_predictions.csv'
-Speech_CRNN_Path = '/data2/home/zhangyue/speechbrain/recipes/IEMOCAP/emotion_recognition/results/CRNN/1969/predictions.csv'
+Speech_CRNN_Path = '/data2/home/zhangyue/speechbrain/recipes/IEMOCAP/emotion_recognition/results/ECAPA-TDNN_LSTM/1969/predictions.csv'
 Speech_CRNN_Augment_Path = '/data2/home/zhangyue/speechbrain/recipes/IEMOCAP/emotion_recognition/results/CRNN_augment/1969/predictions.csv'
 
 # id,prediction,true_value,outputs0,outputs1,outputs2,outputs3
@@ -94,10 +94,10 @@ if __name__ == "__main__":
     for i in range(0,11):
         w1 = 0 if i==0 else i/10
         w2 = round(1-w1,1)
-        true_values, predictions = weight_fuse(w1, w2, speech_dic=speech_CRNN_Augment_dic)
-        WA, UA = result(true_values, predictions, output_folder='./output_folder', title=None)
+        true_values, predictions = weight_fuse(w1, w2, speech_dic=speech_CRNN_dic)
+        WA, UA = result(true_values, predictions, output_folder='./output_folder', title)
         true_values, predictions = weight_fuse(w1, 1-w1)
-        WA, UA = round(WA, 2), round(UA, 2) 
+        WA, UA = round(WA, 4), round(UA, 4) 
         print("{}*speech + {}*nlp : WA:{}, UA:{}".format(w1, w2, WA, UA))
         fp.write("{}*speech + {}*nlp : WA:{}, UA:{}\n".format(w1, w2, WA, UA))
     fp.close()
