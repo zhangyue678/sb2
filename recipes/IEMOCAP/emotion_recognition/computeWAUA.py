@@ -20,7 +20,7 @@ def result(save_folder, output_folder, plot_confusion=True):
     print(LABELS) 
    
     path = output_folder + '/predictions.csv'
-    #path = '/data2/home/zhangyue/speechbrain/recipes/IEMOCAP/emotion_recognition/results/ECAPA-TDNN_LSTM/1969/save/goodModel_0.69/predictions.csv'
+    #path = '/data2/home/zhangyue/speechbrain/recipes/IEMOCAP/emotion_recognition/results/ECAPA-TDNN/1968/predictions.csv'
     with open(path, newline="") as csvfile:
         pred = []
         label = []

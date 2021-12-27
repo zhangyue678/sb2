@@ -372,4 +372,4 @@ if __name__ == "__main__":
     )
 
     from computeWAUA import result
-    result(hparams["save_folder"], hparams["output_folder"])
+    result(hparams["save_folder"], hparams["output_folder"], plot_confusion=False)

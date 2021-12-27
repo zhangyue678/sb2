@@ -8,14 +8,14 @@
 # ########################################
 
 # Seed needs to be set at top of yaml, before objects with parameters are made
-seed: 1968
+seed: 1969
 __set_seed: !apply:torch.manual_seed [!ref <seed>]
 
 # Dataset will be downloaded to the `data_original`
 data_original: /data2/home/dataset/iemocap/IEMOCAP_full_release/Session
 # Data prepare function will create a modified dataset with structured data
 data_folder: /data2/home/dataset/iemocap/IEMOCAP_ahsn_leave-two-speaker-out
-output_folder: !ref results/ECAPA-TDNN/<seed>
+output_folder: !ref results/ResNet/<seed>
 save_folder: !ref <output_folder>/save
 train_log: !ref <output_folder>/train_log.txt
 
@@ -40,7 +40,7 @@ error_stats: !name:speechbrain.utils.metric_stats.MetricStats
 ckpt_interval_minutes: 15 # save checkpoint every N min
 
 # Training Parameters
-number_of_epochs: 30
+number_of_epochs: 25
 batch_size: 8
 gradient_accumulation: 2
 lr: 0.0001
@@ -77,34 +77,15 @@ compute_features: !new:speechbrain.lobes.features.Fbank
     right_frames: !ref <right_frames>
     deltas: !ref <deltas>
 
-embedding_model: !new:speechbrain.lobes.models.ECAPA_TDNN.ECAPA_TDNN
+embedding_model: !new:speechbrain.lobes.models.resnet.ResNet
     input_size: !ref <n_mels>
-    channels: [512, 512, 512, 512, 1536]
-    kernel_sizes: [5, 3, 3, 3, 1]
-    dilations: [1, 2, 3, 4, 1]
-    attention_channels: 64
-    lin_neurons: 96
 
-classifier: !new:speechbrain.lobes.models.ECAPA_TDNN.Classifier
+classifier: !new:speechbrain.lobes.models.ECAPA_TDNN_LSTM.Classifier
     input_size: 96
     out_neurons: !ref <out_n_neurons>
 
 epoch_counter: !new:speechbrain.utils.epoch_loop.EpochCounter
     limit: !ref <number_of_epochs>
-
-augment_wavedrop: !new:speechbrain.lobes.augment.TimeDomainSpecAugment
-    sample_rate: !ref <sample_rate>
-    speeds: [100]
-
-augment_speed: !new:speechbrain.lobes.augment.TimeDomainSpecAugment
-    sample_rate: !ref <sample_rate>
-    speeds: [95, 100, 105]
-
-augment_pipeline: [
-    !ref <augment_wavedrop>,
-    !ref <augment_speed>,
-]
-concat_augment: True
 
 mean_var_norm: !new:speechbrain.processing.features.InputNormalization
     norm_type: sentence
@@ -112,8 +93,6 @@ mean_var_norm: !new:speechbrain.processing.features.InputNormalization
 
 modules:
     compute_features: !ref <compute_features>
-    augment_wavedrop: !ref <augment_wavedrop>
-    augment_speed: !ref <augment_speed>
     embedding_model: !ref <embedding_model>
     classifier: !ref <classifier>
     mean_var_norm: !ref <mean_var_norm>
