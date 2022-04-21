@@ -1,7 +1,7 @@
 import os
 import shutil
 
-dir = '/data2/home/zhangyue/speechbrain/recipes/IEMOCAP/emotion_recognition/results/ResNet/1969/save/'
+dir = '/data2/home/zhangyue/speechbrain/recipes/IEMOCAP/emotion_recognition/results/ECAPA-TDNN_LSTM_softmax/1969/save/'
 
 if os.path.exists(dir):
     if not os.path.exists(dir+'models'):

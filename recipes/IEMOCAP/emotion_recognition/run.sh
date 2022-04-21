@@ -3,7 +3,7 @@
 
 echo "run the python train_CNN.py hparams/train_ResNet.yaml";
 count=0; while (( $count < 10 ));
-do  python moveModels.py && python train_CNN.py hparams/train_ResNet.yaml && python moveModels.py;
+do  python moveModels.py && python train.py hparams/train_ECAPA_LSTM_softmax.yaml && python moveModels.py;
 ((count=$count+1));
 done;
 

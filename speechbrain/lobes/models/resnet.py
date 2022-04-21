@@ -131,6 +131,13 @@ class Bottleneck(nn.Module):
         return out
 
 
+'''
+resnet18 : block=BasicBlock, layers=[2, 2, 2, 2]
+resnet34 : block=BasicBlock, layers=[3, 4, 6, 3]
+resnet50 : block=Bottleneck, layers=[3, 4, 6, 3]
+resnet101: block=Bottleneck, layers=[3, 4, 23, 3]
+resnet152: block=Bottleneck, layers=[3, 8, 36, 3]
+'''
 class ResNet(nn.Module):
     def __init__(
         self,

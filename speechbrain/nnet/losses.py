@@ -967,6 +967,63 @@ class LogSoftmaxWrapper(nn.Module):
         return loss
 
 
+class LogSoftmaxCE(nn.Module):
+    """
+    Arguments
+    ---------
+    Returns
+    ---------
+    loss : torch.Tensor
+        Learning loss
+    predictions : torch.Tensor
+        Log probabilities
+    Example
+    -------
+    >>> outputs = torch.tensor([ [1., -1.], [-1., 1.], [0.9, 0.1], [0.1, 0.9] ])
+    >>> outputs = outputs.unsqueeze(1)
+    >>> targets = torch.tensor([ [0], [1], [0], [1] ])
+    >>> log_prob = LogSoftmaxWrapper(nn.Identity())
+    >>> loss = log_prob(outputs, targets)
+    >>> 0 <= loss < 1
+    tensor(True)
+    >>> log_prob = LogSoftmaxWrapper(AngularMargin(margin=0.2, scale=32))
+    >>> loss = log_prob(outputs, targets)
+    >>> 0 <= loss < 1
+    tensor(True)
+    >>> outputs = torch.tensor([ [1., -1.], [-1., 1.], [0.9, 0.1], [0.1, 0.9] ])
+    >>> log_prob = LogSoftmaxWrapper(AdditiveAngularMargin(margin=0.3, scale=32))
+    >>> loss = log_prob(outputs, targets)
+    >>> 0 <= loss < 1
+    tensor(True)
+    """
+
+    def __init__(self):
+        super(LogSoftmaxCE, self).__init__()
+        self.criterion = torch.nn.CrossEntropyLoss(reduction="sum")
+
+    def forward(self, outputs, targets, length=None):
+        """
+        Arguments
+        ---------
+        outputs : torch.Tensor
+            Network output tensor, of shape
+            [batch, 1, outdim].
+        targets : torch.Tensor
+            Target tensor, of shape [batch, 1].
+        Returns
+        -------
+        loss: torch.Tensor
+            Loss for current examples.
+        """
+        outputs = outputs.squeeze(1)
+        targets = targets.squeeze(1)
+        targets = F.one_hot(targets.long(), outputs.shape[1]).float()
+
+        predictions = F.log_softmax(outputs, dim=1)
+        loss = self.criterion(predictions, targets) / targets.sum()
+        return loss
+
+
 def ctc_loss_kd(log_probs, targets, input_lens, blank_index, device):
     """Knowledge distillation for CTC loss.
 
